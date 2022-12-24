@@ -4,6 +4,7 @@
 
 	Jun 2007: Ricardo Timmermann, implemetation
 
+	MODIFIED: DEC 2022 by Zhivko Y. Krastev
 
 */
 
@@ -20,7 +21,7 @@
 
 void DHT_task(void *pvParameter)
 {
-	setDHTgpio( 4 );
+	setDHTgpio( 32 );
 	printf( "Starting DHT Task\n\n");
 
 	while(1) {
@@ -33,16 +34,17 @@ void DHT_task(void *pvParameter)
 		printf( "Hum %.1f\n", getHumidity() );
 		printf( "Tmp %.1f\n", getTemperature() );
 		
-		// -- wait at least 2 sec before reading again ------------
+		// -- wait at LEAST 2 sec before reading again ------------
 		// The interval of whole process must be beyond 2 seconds !! 
-		vTaskDelay( 3000 / portTICK_RATE_MS );
+		vTaskDelay( 3000 / portTICK_PERIOD_MS );
 	}
 }
 
 void app_main()
 {
 	nvs_flash_init();
-	vTaskDelay( 1000 / portTICK_RATE_MS );
+    printf("portTICK_PERIOD_MS: %ld\n", portTICK_PERIOD_MS);
+	vTaskDelay( 2000 / portTICK_PERIOD_MS );
 	xTaskCreate( &DHT_task, "DHT_task", 2048, NULL, 5, NULL );
 }
 
